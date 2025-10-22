@@ -113,7 +113,20 @@ export default function NewPostPage() {
         <div className="flex justify-end gap-4">
           <button
             type="button"
-            onClick={() => router.push('/posts')}
+            onClick={() => {
+              // Ask the user whether to save as draft or discard
+              const saveAsDraft = window.confirm('Do you want to save this post as a draft? Press OK to save as draft, Cancel to discard.');
+              if (saveAsDraft) {
+                // create as unpublished draft and return to posts list so drafts can be viewed
+                createPost.mutate({ title, content, published: false, categoryIds: selectedCategories }, {
+                  onSuccess: () => {
+                    router.push('/posts');
+                  }
+                });
+              } else {
+                router.push('/posts');
+              }
+            }}
             className="px-4 py-2 text-gray-600 hover:text-gray-800"
           >
             Cancel

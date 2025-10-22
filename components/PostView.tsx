@@ -3,7 +3,9 @@
 import { trpc } from '~/utils/trpc';
 import { marked } from 'marked';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Category } from '~/types/schema';
+import { useSearchParams } from 'next/navigation';
 
 interface PostViewProps {
   slug: string;
@@ -11,14 +13,31 @@ interface PostViewProps {
 
 export function PostView({ slug }: PostViewProps) {
   const utils = trpc.useContext();
-  const { data: post, isLoading, error } = trpc.posts.get.useQuery({ slug });
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const includeDrafts = searchParams?.get('draft') === 'true';
+  const { data: post, isLoading, error } = trpc.posts.get.useQuery({ slug, includeDrafts });
 
   const publishMutation = trpc.posts.publish.useMutation({
-    onSuccess: () => utils.posts.list.invalidate(),
+    onSuccess: (data) => {
+      utils.posts.list.invalidate();
+      // if we're viewing a draft, redirect to the published post URL
+      if (includeDrafts && data?.slug) {
+        router.push(`/posts/${data.slug}`);
+      }
+    },
   });
 
   const unpublishMutation = trpc.posts.unpublish.useMutation({
     onSuccess: () => utils.posts.list.invalidate(),
+  });
+
+  const deleteMutation = trpc.posts.delete.useMutation({
+    onSuccess: () => {
+      // invalidate list and navigate away
+      utils.posts.list.invalidate();
+      router.push('/posts');
+    }
   });
 
   // Loading state with skeleton
@@ -78,17 +97,31 @@ export function PostView({ slug }: PostViewProps) {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-4xl font-bold">{post.title}</h1>
         <div>
+          <Link href={`/posts/${post.slug}/edit`} className="mr-3">
+            <button className="px-3 py-1 border rounded bg-gray-100 text-gray-800" aria-label="Edit post">
+              Edit
+            </button>
+          </Link>
           {post.published ? (
             <button
-              onClick={() => unpublishMutation.mutate({ id: post.id })}
+              onClick={() => {
+                const ok = window.confirm('Are you sure you want to delete this blog? This action cannot be undone.');
+                if (ok) deleteMutation.mutate({ id: post.id });
+              }}
               className="px-3 py-1 border rounded bg-yellow-100 text-yellow-800"
-              aria-label="Unpublish post"
+              aria-label="Delete post (via unpublish)"
             >
               Unpublish
             </button>
           ) : (
             <button
-              onClick={() => publishMutation.mutate({ id: post.id })}
+              onClick={() => {
+                if (includeDrafts) {
+                  const ok = window.confirm('Are you sure you want to publish this blog?');
+                  if (!ok) return;
+                }
+                publishMutation.mutate({ id: post.id });
+              }}
               className="px-3 py-1 border rounded bg-green-100 text-green-800"
               aria-label="Publish post"
             >

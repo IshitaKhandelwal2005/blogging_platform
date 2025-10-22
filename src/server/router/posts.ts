@@ -33,19 +33,23 @@ export const postsRouter = router({
   list: publicProcedure
     .input(z.object({ categoryId: z.number().optional(), includeDrafts: z.boolean().optional() }).optional())
     .query(async ({ input }) => {
-      const includeDrafts = !!input?.includeDrafts;
+      // includeDrafts === true  => show only drafts (published = false)
+      // includeDrafts === false => show only published (published = true)
+      const showDraftsOnly = !!input?.includeDrafts;
 
       if (input?.categoryId) {
         // join posts -> post_categories -> categories
+        const publishedFilter = showDraftsOnly ? 'and p.published = false' : 'and p.published = true';
         const rows = await pgPool.query(
-          `select p.* from posts p inner join post_categories pc on pc.post_id = p.id where pc.category_id = $1 ${includeDrafts ? '' : 'and p.published = true'} order by p.created_at desc`,
+          `select p.* from posts p inner join post_categories pc on pc.post_id = p.id where pc.category_id = $1 ${publishedFilter} order by p.created_at desc`,
           [input.categoryId]
         );
         return rows.rows;
       }
 
-  const rows = await pgPool.query(`select * from posts ${includeDrafts ? '' : 'where published = true'} order by created_at desc`);
-  return rows.rows;
+      const whereClause = showDraftsOnly ? 'where published = false' : 'where published = true';
+      const rows = await pgPool.query(`select * from posts ${whereClause} order by created_at desc`);
+      return rows.rows;
     }),
 
   get: publicProcedure.input(z.object({ slug: z.string(), includeDrafts: z.boolean().optional() }).optional()).query(async ({ input }) => {

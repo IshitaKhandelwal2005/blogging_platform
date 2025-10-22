@@ -105,7 +105,7 @@ export default function PostsPage() {
           {posts?.map((post: Post) => (
             <Link
               key={post.id}
-              href={`/posts/${post.slug}`}
+              href={post.published ? `/posts/${post.slug}` : `/posts/${post.slug}?draft=true`}
               className="block p-6 border rounded-lg hover:shadow-lg transition-shadow"
             >
               <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
