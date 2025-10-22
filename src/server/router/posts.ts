@@ -3,11 +3,12 @@ import { z } from 'zod';
 import slugify from 'slugify';
 import { db, pgPool } from '../../db/client';
 import { Post, PostWithCategories } from '../../types/schema';
+import { TRPCError } from '@trpc/server';
 // we will use pgPool for raw SQL queries in this router
 
 const postInput = z.object({
-  title: z.string().min(1),
-  content: z.string().min(1),
+  title: z.string().min(1, 'Title is required'),
+  content: z.string().min(1, 'Content is required'),
   published: z.boolean().optional(),
   categoryIds: z.array(z.number()).optional()
 });

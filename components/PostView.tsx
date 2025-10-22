@@ -1,7 +1,7 @@
 'use client';
 
 import { trpc } from '~/utils/trpc';
-import { marked } from 'marked';
+import { parseMarkdown, calculateReadingTime, getWordCount } from '~/utils/markdown';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Category } from '~/types/schema';
@@ -143,10 +143,23 @@ export function PostView({ slug }: PostViewProps) {
         ))}
       </div>
 
+      {/* Post Stats */}
+      <div className="flex gap-4 text-sm text-gray-500 mb-6 pb-6 border-b">
+        <span>{getWordCount(post.content)} words</span>
+        <span>•</span>
+        <span>{calculateReadingTime(post.content)} min read</span>
+        <span>•</span>
+        <span>{new Date(post.created_at).toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })}</span>
+      </div>
+
       {/* Markdown content */}
       <div
         className="prose max-w-none"
-        dangerouslySetInnerHTML={{ __html: marked(post.content) }}
+        dangerouslySetInnerHTML={{ __html: parseMarkdown(post.content) }}
       />
 
       <div className="mt-8 text-sm text-gray-500">

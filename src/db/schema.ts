@@ -1,10 +1,10 @@
-import { pgTable, serial, text, varchar, timestamp, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, varchar, timestamp, boolean, integer, primaryKey } from 'drizzle-orm/pg-core';
 
 export const posts = pgTable('posts', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   content: text('content').notNull(),
-  slug: varchar('slug', { length: 255 }).notNull(), // add unique index in migration
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
   // published flag indicates whether the post is public or a draft
   published: boolean('published').default(false),
   // keep created_at timestamp
@@ -14,11 +14,13 @@ export const posts = pgTable('posts', {
 export const categories = pgTable('categories', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 100 }).notNull(),
-  slug: varchar('slug', { length: 100 }).notNull(), // add unique index in migration
+  slug: varchar('slug', { length: 100 }).notNull().unique(),
   description: text('description')
 });
 
 export const postCategories = pgTable('post_categories', {
-  post_id: serial('post_id').notNull(),
-  category_id: serial('category_id').notNull()
-});
+  post_id: integer('post_id').notNull().references(() => posts.id, { onDelete: 'cascade' }),
+  category_id: integer('category_id').notNull().references(() => categories.id, { onDelete: 'cascade' })
+}, (table) => ({
+  pk: primaryKey({ columns: [table.post_id, table.category_id] })
+}));

@@ -1,7 +1,7 @@
 'use client';
 
 import { trpc } from '~/utils/trpc';
-import { marked } from 'marked';
+import { parseMarkdown } from '~/utils/markdown';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -96,7 +96,7 @@ export default function NewPostPage() {
           {preview ? (
             <div
               className="prose max-w-none p-4 border rounded-lg min-h-[300px]"
-              dangerouslySetInnerHTML={{ __html: marked(content) }}
+              dangerouslySetInnerHTML={{ __html: parseMarkdown(content) }}
             />
           ) : (
             <textarea

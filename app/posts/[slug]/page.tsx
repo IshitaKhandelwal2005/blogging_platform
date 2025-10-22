@@ -1,16 +1,18 @@
 import { Metadata } from 'next';
 import { PostView } from '@/components/PostView';
 
-// Use loose typing for Next.js PageProps compatibility
-type Props = any;
+type Props = {
+  params: Promise<{ slug: string }>;
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const slug = params?.slug ?? 'post';
+  const { slug } = await params;
   return {
     title: `Blog Post - ${slug}`,
   };
 }
 
-export default function PostPage({ params }: Props) {
-  return <PostView slug={params?.slug} />;
+export default async function PostPage({ params }: Props) {
+  const { slug } = await params;
+  return <PostView slug={slug} />;
 }

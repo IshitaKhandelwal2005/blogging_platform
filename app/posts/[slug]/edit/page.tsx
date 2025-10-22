@@ -1,13 +1,13 @@
 "use client";
 
 import { trpc } from '~/utils/trpc';
-import { marked } from 'marked';
-import { useState, useEffect } from 'react';
+import { parseMarkdown } from '~/utils/markdown';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function EditPostPage({ params }: { params: { slug: string } }) {
+export default function EditPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter();
-  const slug = params.slug;
+  const { slug } = use(params);
   const { data: categories } = trpc.categories.list.useQuery();
   const { data: post, isLoading } = trpc.posts.get.useQuery({ slug }, { enabled: !!slug });
 
@@ -76,7 +76,7 @@ export default function EditPostPage({ params }: { params: { slug: string } }) {
           </div>
 
           {preview ? (
-            <div className="prose max-w-none p-4 border rounded-lg min-h-[300px]" dangerouslySetInnerHTML={{ __html: marked(content) }} />
+            <div className="prose max-w-none p-4 border rounded-lg min-h-[300px]" dangerouslySetInnerHTML={{ __html: parseMarkdown(content) }} />
           ) : (
             <textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} className="w-full px-3 py-2 border rounded-lg min-h-[300px]" required />
           )}
