@@ -1,40 +1,63 @@
-# Blog Website
+# Blogging Platform Assessment
 
-A modern blogging platform built with Next.js 15, showcasing full-stack TypeScript development with type-safe APIs and efficient state management.
+A full-stack blogging platform built with Next.js 15, PostgreSQL, and modern web technologies as part of a technical assessment.
 
-## Tech Stack
+## 🚀 Features
 
-- **Frontend**: Next.js 15, React, TypeScript
-- **Styling**: Tailwind CSS, Markdown rendering
+### 🔴 Core Features (Priority 1)
+- [] Blog post CRUD operations
+- [] Category management
+- [] Many-to-many post-category relationships
+- [] Blog listing with category filtering
+- [] Individual post view pages
+- [] Responsive navigation
+- [] Clean, professional UI
+
+### 🟡 Enhanced Features (Priority 2)
+- [] Dashboard for content management
+- [] Draft vs Published post status
+- [] Loading and error states
+- [] Mobile-responsive design
+- [] Markdown content editor
+
+### 🟢 Bonus Features (Priority 3)
+- [] Post preview
+- [] Pagination
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 15 (App Router), React 18, TypeScript
+- **Styling**: Tailwind CSS, shadcn/ui
 - **State Management**: Zustand, React Query
-- **API Layer**: tRPC, Zod validation
-- **Database**: PostgreSQL, Drizzle ORM
-- **Development**: TypeScript, ESLint, Prettier
+- **API**: tRPC with Zod validation
+- **Database**: PostgreSQL with Drizzle ORM
+- **Deployment**: Vercel
 
-## Features
+## 🏗️ Project Structure
 
-- 📝 Create and edit blog posts with Markdown support
-- 🏷️ Categorize posts with multiple categories
-- 🔍 Filter posts by category
-- ⚡ Optimistic updates for better UX
-- 💾 Auto-save drafts
-- 🎨 Responsive design with loading states
-- 🔒 Type-safe end-to-end
+```
+app/               # App Router pages
+components/        # Reusable UI components
+src/
+├── db/                # Database schema and client
+├── server/            # tRPC routers and API logic
+└── store/            # store for db
+```
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
 - PostgreSQL 14+
-- npm or yarn
+- npm 
 
-### Setup
+### Local Development
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/blog_website.git
-   cd blog_website
+   git clone https://github.com/IshitaKhandelwal2005/blogging_platform.git
+   cd blogging_platform
    ```
 
 2. Install dependencies:
@@ -42,137 +65,78 @@ A modern blogging platform built with Next.js 15, showcasing full-stack TypeScri
    npm install
    ```
 
-3. Environment setup:
+3. Set up environment variables:
    ```bash
-   # Copy example env file
    cp .env.example .env.local
-   
-   # Edit .env.local and set your PostgreSQL connection string:
-   # DATABASE_URL=postgres://user:password@localhost:5432/blog_db
+   # Update the .env.local with your database credentials
    ```
 
-4. Database setup:
+4. Set up the database:
    ```bash
-   # Generate and apply database migrations
-   npm run db:push
+   # Run migrations
+   npx drizzle-kit push:pg
    
-   # Seed the database with sample data
-   npm run seed
+   # Seed with sample data
+   npx tsx scripts/seed.ts
    ```
 
-5. Start development server:
+5. Start the development server:
    ```bash
    npm run dev
    ```
 
-The application will be available at `http://localhost:3000`
+## 📊 Database Schema
 
-### Sample Data
-
-The seed script (`npm run seed`) provides:
-- 8 predefined categories (Design, Development, Architecture, etc.)
-- 5 sample blog posts with rich Markdown content
-- Example code snippets and formatting
-- Various post categories for testing filters
-
-## Project Structure
-
+```mermaid
+erDiagram
+    POSTS ||--o{ POST_CATEGORIES : has
+    CATEGORIES ||--o{ POST_CATEGORIES : has
+    POSTS {
+        string id PK
+        string title
+        string content
+        string slug
+        boolean published
+        datetime createdAt
+        datetime updatedAt
+    }
+    CATEGORIES {
+        string id PK
+        string name
+        string slug
+    }
+    POST_CATEGORIES {
+        string postId FK
+        string categoryId FK
+    }
 ```
-blog_website/
-├── app/                # Next.js app directory
-│   ├── api/           # API routes (tRPC)
-│   ├── posts/         # Post pages
-│   └── layout.tsx     # Root layout
-├── components/        # React components
-├── src/
-│   ├── db/           # Database config & schema
-│   ├── server/       # tRPC routers
-│   ├── store/        # Zustand stores
-│   └── utils/        # Utility functions
-└── scripts/          # Database scripts
+
+## 🏗️ Architecture Decisions
+
+### tRPC Structure
+- **Routers**:
+  - `post.router.ts`: All post-related operations
+  - `category.router.ts`: Category management
+  - `app.router.ts`: Combines all routers
+
+### Key Decisions
+1. **Markdown over Rich Text**: Chose markdown for faster implementation
+2. **shadcn/ui**: Used for pre-built, accessible components
+3. **No Authentication**: Focused on core features as per requirements
+4. **Optimistic Updates**: Implemented for better UX
+
+## 🧪 Testing
+
+Run tests:
+```bash
+npm test
 ```
 
-## Available Scripts
+Run tests with coverage:
+```bash
+npm run test:coverage
+```
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run format` - Format with Prettier
-- `npm run db:push` - Update database schema
-- `npm run seed` - Populate database with sample data
-- `npm test` - Run tests
-- `npm run test:watch` - Run tests in watch mode
-- `npm run test:coverage` - Generate test coverage report
-- `npm run type-check` - Check TypeScript types
+## 🌐 Live Demo
 
-## Deployment
-
-This project is configured for deployment on Vercel:
-
-1. Push your code to GitHub
-2. Create a new project on [Vercel](https://vercel.com)
-3. Connect your GitHub repository
-4. Add the required environment variables:
-   ```
-   DATABASE_URL=your-postgres-connection-string
-   ```
-5. Deploy!
-
-### PostgreSQL Setup for Production
-
-1. Create a PostgreSQL database (recommended providers: Vercel Postgres, Neon, Supabase)
-2. Add the connection string to Vercel environment variables
-3. The deployment will automatically:
-   - Set up the database schema
-   - Run the build process
-   - Deploy the application
-
-### Manual Deployment
-
-If you prefer to deploy elsewhere:
-
-1. Set environment variables:
-   ```bash
-   export DATABASE_URL=your-postgres-connection-string
-   ```
-
-2. Build and start:
-   ```bash
-   npm run build
-   npm run start
-   ```
-
-## Testing
-
-Tests are written using Jest and React Testing Library. Each test file is located next to its corresponding component with the `.test.tsx` extension.
-
-To ensure code quality:
-
-1. Run the type checker:
-   ```bash
-   npm run type-check
-   ```
-
-2. Run tests:
-   ```bash
-   npm test
-   ```
-
-3. Check test coverage:
-   ```bash
-   npm run test:coverage
-   ```
-
-4. Run linter:
-   ```bash
-   npm run lint
-   ```
-
-## Code Quality
-
-- ESLint enforces code style and best practices
-- Prettier ensures consistent formatting
-- TypeScript provides type safety
-- Jest and React Testing Library for testing
-- GitHub Actions for CI/CD (optional)
+[View Live Demo](https://blogging-platform-f60j58lb0-ishitas-projects-cdb5fa95.vercel.app/)
