@@ -139,4 +139,4 @@ npm run test:coverage
 
 ## 🌐 Live Demo
 
-[View Live Demo](https://blogging-platform-f60j58lb0-ishitas-projects-cdb5fa95.vercel.app/)
+(https://blogging-platform-f60j58lb0-ishitas-projects-cdb5fa95.vercel.app/)
