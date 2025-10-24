@@ -10,7 +10,7 @@ const postInput = z.object({
   content: z.string().min(1),
   imageUrl: z.string().optional(),
   published: z.boolean().optional(),
-  categoryIds: z.array(z.number()).optional()
+  categoryIds: z.array(z.number()).min(1)
 });
 
 export const postsRouter = router({

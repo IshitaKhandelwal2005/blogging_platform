@@ -2,8 +2,6 @@ const { Pool } = require('pg');
 const fs = require('fs');
 const path = require('path');
 
-// Load environment variables
-require('dotenv').config({ path: path.join(__dirname, '../.env.local') });
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 async function runMigration() {

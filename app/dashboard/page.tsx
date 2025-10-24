@@ -65,10 +65,12 @@ export default function DashboardPage() {
     }
   };
 
-  const allPosts = [...(publishedPosts || []), ...(draftPosts || [])];
+  const publishedPostsData = publishedPosts && 'posts' in publishedPosts ? publishedPosts.posts : [];
+  const draftPostsData = draftPosts && 'posts' in draftPosts ? draftPosts.posts : [];
+  const allPosts = [...(publishedPostsData || []), ...(draftPostsData || [])];
   const totalPosts = allPosts.length;
-  const publishedCount = publishedPosts?.length || 0;
-  const draftCount = draftPosts?.length || 0;
+  const publishedCount = publishedPostsData?.length || 0;
+  const draftCount = draftPostsData?.length || 0;
   const categoryCount = categories?.length || 0;
 
   return (
