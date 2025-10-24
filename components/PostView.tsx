@@ -1,7 +1,7 @@
 'use client';
 
 import { trpc } from '~/utils/trpc';
-import { parseMarkdown, calculateReadingTime, getWordCount } from '~/utils/markdown';
+import { marked } from 'marked';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Category } from '~/types/schema';
@@ -131,6 +131,17 @@ export function PostView({ slug }: PostViewProps) {
         </div>
       </div>
 
+      {/* Featured Image */}
+      {post.image_url && (
+        <div className="mb-8">
+          <img
+            src={post.image_url}
+            alt={post.title}
+            className="w-full h-auto rounded-lg shadow-lg"
+          />
+        </div>
+      )}
+
       {/* Categories */}
       <div className="flex gap-2 mb-8">
         {post.categories?.map((cat: Category) => (
@@ -143,23 +154,10 @@ export function PostView({ slug }: PostViewProps) {
         ))}
       </div>
 
-      {/* Post Stats */}
-      <div className="flex gap-4 text-sm text-gray-500 mb-6 pb-6 border-b">
-        <span>{getWordCount(post.content)} words</span>
-        <span>•</span>
-        <span>{calculateReadingTime(post.content)} min read</span>
-        <span>•</span>
-        <span>{new Date(post.created_at).toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        })}</span>
-      </div>
-
       {/* Markdown content */}
       <div
         className="prose max-w-none"
-        dangerouslySetInnerHTML={{ __html: parseMarkdown(post.content) }}
+        dangerouslySetInnerHTML={{ __html: marked(post.content) }}
       />
 
       <div className="mt-8 text-sm text-gray-500">

@@ -5,6 +5,8 @@ export interface Post {
   slug: string;
   published: boolean;
   created_at: string | Date;
+  imageUrl?: string | null;
+  categories?: Category[];
 }
 
 export interface Category {

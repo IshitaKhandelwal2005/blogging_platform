@@ -1,2 +1,26 @@
-.env
-./node_modules
+# Environment
+# .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
+
+# Node
+node_modules/
+
+# Uploaded images (but keep the directory structure)
+public/uploads/*
+!public/uploads/.gitkeep/
+
+# Next / build
+.next/
+out/
+dist/
+
+# Drizzle / migrations (if generated output exists)
+drizzle/
+
+# Editor / OS
+.vscode/
+.DS_Store
