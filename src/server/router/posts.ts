@@ -3,7 +3,6 @@ import { z } from 'zod';
 import slugify from 'slugify';
 import { db, pgPool } from '../../db/client';
 import { Post, PostWithCategories } from '../../types/schema';
-// we will use pgPool for raw SQL queries in this router
 
 const postInput = z.object({
   title: z.string().min(1),
@@ -39,8 +38,6 @@ export const postsRouter = router({
       limit: z.number().min(1).max(50).default(10)
     }).optional())
     .query(async ({ input = {} }) => {
-      // includeDrafts === true  => show only drafts (published = false)
-      // includeDrafts === false => show only published (published = true)
       const showDraftsOnly = !!input.includeDrafts;
       const page = input.page || 1;
       const limit = input.limit || 10;

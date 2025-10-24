@@ -10,7 +10,6 @@ cloudinary.config({
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if Cloudinary is configured
     if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
       return NextResponse.json(
         { error: 'Cloudinary is not configured. Please add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET to your environment variables.' },
@@ -28,7 +27,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file type
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (!validTypes.includes(file.type)) {
       return NextResponse.json(
@@ -37,7 +35,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file size (max 5MB)
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
       return NextResponse.json(
@@ -46,11 +43,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Convert file to buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Upload to Cloudinary
     const uploadResponse = await new Promise<any>((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
@@ -69,7 +64,6 @@ export async function POST(request: NextRequest) {
       ).end(buffer);
     });
 
-    // Return the Cloudinary URL
     return NextResponse.json({ 
       success: true, 
       imageUrl: uploadResponse.secure_url 

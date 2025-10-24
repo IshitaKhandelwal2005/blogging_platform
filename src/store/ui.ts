@@ -8,16 +8,13 @@ interface DraftPost {
 }
 
 interface UIStore {
-  // Selected category filter
   selectedCategoryId: number | null;
   setSelectedCategory: (id: number | null) => void;
 
-  // Draft post autosave
   draftPost: DraftPost | null;
   setDraftPost: (draft: DraftPost | null) => void;
   updateDraft: (partial: Partial<DraftPost>) => void;
 
-  // Loading states
   isSubmitting: boolean;
   setSubmitting: (state: boolean) => void;
 }
@@ -25,11 +22,9 @@ interface UIStore {
 export const useUIStore = create<UIStore>()(
   persist(
     (set) => ({
-      // Category filter
       selectedCategoryId: null,
       setSelectedCategory: (id) => set({ selectedCategoryId: id }),
 
-      // Draft post
       draftPost: null,
       setDraftPost: (draft) => set({ draftPost: draft }),
       updateDraft: (partial) =>
@@ -39,7 +34,6 @@ export const useUIStore = create<UIStore>()(
             : null
         })),
 
-      // Loading state
       isSubmitting: false,
       setSubmitting: (state) => set({ isSubmitting: state })
     }),

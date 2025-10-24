@@ -9,8 +9,7 @@ if (!connectionString && typeof window === 'undefined' && process.env.NODE_ENV !
 }
 
 const pool = new Pool({
-  connectionString: connectionString || 'postgresql://localhost:5432/blog_db',
-  // Don't fail during build if DB is not available
+  connectionString: connectionString,
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,

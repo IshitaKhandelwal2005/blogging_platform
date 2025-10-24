@@ -1,7 +1,6 @@
 'use client';
 
 import { trpc } from '~/utils/trpc';
-import { parseMarkdown } from '~/utils/markdown';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -213,12 +212,6 @@ export default function NewPostPage() {
             </button>
           </div>
 
-          {preview ? (
-            <div
-              className="prose max-w-none p-4 border rounded-lg min-h-[300px]"
-              dangerouslySetInnerHTML={{ __html: parseMarkdown(content) }}
-            />
-          ) : (
             <textarea
               id="content"
               value={content}
@@ -226,7 +219,6 @@ export default function NewPostPage() {
               className="w-full px-3 py-2 border rounded-lg min-h-[300px]"
               required
             />
-          )}
         </div>
 
         {/* Submit */}

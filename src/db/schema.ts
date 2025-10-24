@@ -6,9 +6,7 @@ export const posts = pgTable('posts', {
   content: text('content').notNull(),
   slug: varchar('slug', { length: 255 }).notNull().unique(),
   image_url: text('image_url'),
-  // published flag indicates whether the post is public or a draft
   published: boolean('published').default(false),
-  // keep created_at timestamp
   created_at: timestamp('created_at').defaultNow()
 });
 

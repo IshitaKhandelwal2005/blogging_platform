@@ -20,7 +20,7 @@ export const categoriesRouter = router({
       );
       return res.rows[0];
     } catch (error: any) {
-      if (error.code === '23505') { // Unique constraint violation
+      if (error.code === '23505') { 
         throw new TRPCError({
           code: 'CONFLICT',
           message: 'A category with this name already exists'
@@ -97,7 +97,6 @@ export const categoriesRouter = router({
 
   delete: publicProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
     try {
-      // Check if category is in use
       const usageCheck = await pgPool.query(
         `select count(*) as count from post_categories where category_id = $1`,
         [input.id]
